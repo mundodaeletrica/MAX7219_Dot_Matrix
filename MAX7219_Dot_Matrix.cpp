@@ -90,6 +90,16 @@ Usage:
 */
 
 
+byte flipByte(byte c){
+  char r=0;
+  for(byte i = 0; i < 8; i++){
+    r <<= 1;
+    r |= c & 1;
+    c >>= 1;
+  }
+  return r;
+}
+
 
 // destructor
 MAX7219_Dot_Matrix::~MAX7219_Dot_Matrix ()
@@ -194,11 +204,83 @@ void MAX7219_Dot_Matrix::send64pixels (const byte chip, const byte pixels [8])
     // send extra NOPs to push the pixels out to extra displays
     for (byte i = 0; i < chip; i++)
       sendByte (MAX7219_REG_NOOP, MAX7219_REG_NOOP);
-    // rotate pixels 90 degrees
+    
+	
+	// rotate pixels 90 degrees		
+	/*
     byte b = 0;
     for (byte i = 0; i < 8; i++)
-      b |= bitRead (pixels [i], col) << (7 - i);
+      b |= bitRead (pixels [i], col) << (7 - i);	
     sendByte (col + 1, b);
+	*/
+	
+	/*
+	// rotate pixels -90 degrees		
+    byte b = 0;
+    for (byte i = 0; i < 8; i++)
+      b |= bitRead (pixels [i], 7-col) << (i);	
+    sendByte (col + 1, b);
+	*/
+
+	
+	/*
+	// rotate pixels 90 degrees (mirrored)
+    byte b = 0;
+    for (byte i = 0; i < 8; i++)
+      b |= bitRead (pixels [7-i], col) << (7-i);
+    sendByte (col + 1, b);
+	*/
+	
+	/*
+	// rotate pixels -90 degrees (mirrored)
+    byte b = 0;
+    for (byte i = 0; i < 8; i++)
+      b |= bitRead (pixels [i], 7-col) << (7-i);
+    sendByte (col + 1, b);
+	*/
+
+	/*
+	// rotate pixels 90 degrees (mirrored)	
+    byte b = 0;
+    for (byte i = 0; i < 8; i++)
+      b |= bitRead (pixels [i], col) << (i);
+    sendByte (col + 1, b);
+	*/
+	
+	
+	/*
+	// rotate pixels 90 degrees
+    byte b = 0;
+    for (byte i = 0; i < 8; i++)
+      b |= bitRead (pixels [7-i], col) << (i);
+    sendByte (col + 1, b);
+	*/
+
+	/*
+	// rotate pixels 90 degrees (mirrored)
+    byte b = 0;
+    for (byte i = 0; i < 8; i++)
+      b |= bitRead (pixels [7-i], 7-col) << (i);
+    sendByte (col + 1, b);
+	*/
+	
+	/*
+	// rotate pixels -90 degrees
+    byte b = 0;
+    for (byte i = 0; i < 8; i++)
+      b |= bitRead (pixels [7-i], 7-col) << (7-i);
+    sendByte (col + 1, b);
+	*/
+
+
+	
+    byte b = 0;    
+    b = pixels [7-col];
+	b = flipByte(b);
+    sendByte (col + 1, b);
+
+
+	
     // end with enough NOPs so later chips don't update
     for (int i = 0; i < chips_ - chip - 1; i++)
       sendByte (MAX7219_REG_NOOP, MAX7219_REG_NOOP);
